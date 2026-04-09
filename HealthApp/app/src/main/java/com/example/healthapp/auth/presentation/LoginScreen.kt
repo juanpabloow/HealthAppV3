@@ -26,7 +26,8 @@ import com.example.healthapp.ui.theme.AppGreen
 fun LoginScreen(
     modifier: Modifier = Modifier,
     onGoBackClick: () -> Unit,
-    onSkipClick: () -> Unit
+    onSkipClick: () -> Unit,
+    onEmailClick: () -> Unit
 ) {
     AuthScaffold(modifier = modifier) {
         Text(
@@ -46,7 +47,7 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { },
+            onClick = onEmailClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
