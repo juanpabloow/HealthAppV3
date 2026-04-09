@@ -27,7 +27,8 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     onGoBackClick: () -> Unit,
     onSkipClick: () -> Unit,
-    onEmailClick: () -> Unit
+    onEmailClick: () -> Unit,
+    onPhoneClick: () -> Unit
 ) {
     AuthScaffold(modifier = modifier) {
         Text(
@@ -61,7 +62,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = { },
+            onClick = onPhoneClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
