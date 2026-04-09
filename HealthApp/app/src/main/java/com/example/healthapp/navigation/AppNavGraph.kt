@@ -9,12 +9,14 @@ import com.example.healthapp.auth.presentation.LoginScreen
 import com.example.healthapp.auth.presentation.SignUpScreen
 import com.example.healthapp.auth.presentation.SplashScreen
 import com.example.healthapp.auth.presentation.WelcomeScreen
+import com.example.healthapp.auth.presentation.VerificationCodeScreen
 
 private object Routes {
     const val SPLASH = "splash"
     const val WELCOME = "welcome"
     const val LOGIN = "login"
     const val SIGN_UP = "sign_up"
+    const val VERIFICATION_CODE = "verification_code"
 }
 
 @Composable
@@ -45,12 +47,22 @@ fun AppNavGraph(modifier: Modifier = Modifier) {
         composable(Routes.LOGIN) {
             LoginScreen(
                 onGoBackClick = { navController.popBackStack() },
-                onSkipClick = { /* TODO: navigate to home */ }
+                onSkipClick = { /* TODO: navigate to home */ },
+                onEmailClick = { navController.navigate(Routes.VERIFICATION_CODE) }
             )
         }
         composable(Routes.SIGN_UP) {
             SignUpScreen(
-                onGoBackClick = { navController.popBackStack() }
+                onGoBackClick = { navController.popBackStack() },
+                onEmailClick = { navController.navigate(Routes.VERIFICATION_CODE) }
+            )
+        }
+        composable(Routes.VERIFICATION_CODE) {
+            VerificationCodeScreen(
+                onGoBackClick = { navController.popBackStack() },
+                onSendCodeClick = { email ->
+                    // Logic to send code would go here
+                }
             )
         }
     }

@@ -21,7 +21,8 @@ import com.example.healthapp.ui.theme.AppGreen
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    onGoBackClick: () -> Unit
+    onGoBackClick: () -> Unit,
+    onEmailClick: () -> Unit
 ) {
     AuthScaffold(modifier = modifier) {
         Text(
@@ -41,7 +42,7 @@ fun SignUpScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { },
+            onClick = onEmailClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
