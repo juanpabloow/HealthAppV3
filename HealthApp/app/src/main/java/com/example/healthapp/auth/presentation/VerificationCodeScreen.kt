@@ -18,18 +18,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.healthapp.ui.theme.AppGreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerificationCodeScreen(
     modifier: Modifier = Modifier,
+    verificationType: String = "email", // "email" or "phone"
     onGoBackClick: () -> Unit,
     onSendCodeClick: (String) -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
+    var inputValue by remember { mutableStateOf("") }
+    
+    val isEmail = verificationType == "email"
+    val title = "Send Verification Code"
+    val subtitle = if (isEmail) "Enter your email address" else "Enter your phone number"
+    val label = if (isEmail) "Email Address" else "Phone Number"
+    val placeholder = if (isEmail) "example@gmail.com" else "+1 123 456 7890"
+    val keyboardType = if (isEmail) KeyboardType.Email else KeyboardType.Phone
 
     AuthScaffold(modifier = modifier) {
         Text(
-            text = "Send Verification Code",
+            text = title,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -37,7 +44,7 @@ fun VerificationCodeScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Enter your email address",
+            text = subtitle,
             fontSize = 14.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
@@ -45,28 +52,28 @@ fun VerificationCodeScreen(
         )
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Email Label
+        // Label
         Text(
-            text = "Email Address",
+            text = label,
             fontSize = 14.sp,
             color = AppGreen,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Custom Outlined TextField - Fixed for Material 3
+        // Custom Outlined TextField
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text("example@gmail.com", color = Color.LightGray) },
+            value = inputValue,
+            onValueChange = { inputValue = it },
+            placeholder = { Text(placeholder, color = Color.LightGray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(12.dp),
             singleLine = true,
             trailingIcon = {
-                if (email.isNotEmpty()) {
-                    IconButton(onClick = { email = "" }) {
+                if (inputValue.isNotEmpty()) {
+                    IconButton(onClick = { inputValue = "" }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Clear text",
@@ -75,7 +82,6 @@ fun VerificationCodeScreen(
                     }
                 }
             },
-            // The fix: Using OutlinedTextFieldDefaults.colors for Material 3 compatibility
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.Black,
                 unfocusedBorderColor = Color.Black,
@@ -83,14 +89,14 @@ fun VerificationCodeScreen(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Send Verification Code Button
         Button(
-            onClick = { onSendCodeClick(email) },
+            onClick = { onSendCodeClick(inputValue) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
