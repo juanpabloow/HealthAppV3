@@ -16,18 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.healthapp.auth.domain.model.User
 import com.example.healthapp.dashboard.presentation.DashboardViewModel
 import com.example.healthapp.dashboard.presentation.ScreenTimeScreen
+import com.example.healthapp.plans.navigation.PlansNavGraph
 import com.example.healthapp.profile.presentation.ProfileScreen
 import com.example.healthapp.ui.theme.AppGreen
 import com.example.healthapp.ui.theme.Poppins
@@ -67,7 +64,7 @@ fun MainScreen(
                         onRefreshPermission = dashboardViewModel::refreshPermission
                     )
                 }
-                MainTab.HOME -> ComingSoonScreen()
+                MainTab.HOME -> PlansNavGraph(modifier = Modifier.fillMaxSize())
                 MainTab.PROFILE -> ProfileScreen(
                     user = user,
                     onLogout = onLogout
@@ -170,27 +167,3 @@ private fun BottomNavItem(
     }
 }
 
-@Composable
-private fun ComingSoonScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("🌿", fontSize = 64.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "Coming Soon",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = Poppins,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "Something green is growing here.",
-                fontSize = 14.sp,
-                fontFamily = Poppins,
-                color = Color.Gray,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
