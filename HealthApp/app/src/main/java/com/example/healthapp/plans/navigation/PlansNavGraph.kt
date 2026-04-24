@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.healthapp.auth.domain.model.User
 import com.example.healthapp.plans.presentation.CreatePlanStep1Screen
 import com.example.healthapp.plans.presentation.CreatePlanStep2Screen
 import com.example.healthapp.plans.presentation.CreatePlanStep3Screen
@@ -44,7 +45,11 @@ private object PlanRoutes {
 }
 
 @androidx.compose.runtime.Composable
-fun PlansNavGraph(modifier: Modifier = Modifier) {
+fun PlansNavGraph(
+    modifier: Modifier = Modifier,
+    user: User? = null,
+    onProfileClick: () -> Unit = {}
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -60,9 +65,11 @@ fun PlansNavGraph(modifier: Modifier = Modifier) {
 
             PlanListScreen(
                 state         = state,
+                user          = user,
                 onPlanClick   = { planId -> navController.navigate(PlanRoutes.detail(planId)) },
                 onCreateClick = { navController.navigate(PlanRoutes.CREATE_GRAPH) },
-                onDeletePlan  = { planId -> planVm.deletePlan(planId) }
+                onDeletePlan  = { planId -> planVm.deletePlan(planId) },
+                onProfileClick = onProfileClick
             )
         }
 

@@ -35,9 +35,8 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun HealthAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    darkTheme: Boolean = false,   // Always light — ignore system setting
+    dynamicColor: Boolean = false, // Disable dynamic color to keep our palette
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

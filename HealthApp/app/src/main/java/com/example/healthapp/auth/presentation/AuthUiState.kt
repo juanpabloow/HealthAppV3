@@ -8,5 +8,6 @@ data class AuthUiState(
     val error: String? = null,
     val isAuthenticated: Boolean = false,
     val pendingEmail: String = "",
-    val pendingPhone: String = ""
+    val pendingPhone: String = "",
+    val isProfileUpdated: Boolean = false
 )

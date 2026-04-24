@@ -37,7 +37,8 @@ fun ScreenTimeScreen(
     state: DashboardUiState,
     onTabSelected: (ScreenTimeTab) -> Unit,
     onDateSelected: (Long) -> Unit,
-    onRefreshPermission: () -> Unit
+    onRefreshPermission: () -> Unit,
+    onProfileClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -57,7 +58,7 @@ fun ScreenTimeScreen(
     ) {
         item {
             // Header con mes/semana
-            ScreenTimeHeader(state = state, onTabSelected = onTabSelected)
+            ScreenTimeHeader(state = state, onTabSelected = onTabSelected, onProfileClick = onProfileClick)
         }
 
         item {
@@ -74,7 +75,11 @@ fun ScreenTimeScreen(
 }
 
 @Composable
-private fun ScreenTimeHeader(state: DashboardUiState, onTabSelected: (ScreenTimeTab) -> Unit) {
+private fun ScreenTimeHeader(
+    state: DashboardUiState,
+    onTabSelected: (ScreenTimeTab) -> Unit,
+    onProfileClick: () -> Unit
+) {
     val cal = Calendar.getInstance().apply { timeInMillis = state.selectedDateMs }
     val monthFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
     val monthTitle = monthFormat.format(cal.time)
@@ -127,13 +132,14 @@ private fun ScreenTimeHeader(state: DashboardUiState, onTabSelected: (ScreenTime
                         modifier = Modifier.size(20.dp)
                     )
                 }
-                // Avatar placeholder
+                // Avatar — tap to go to Profile tab
                 Box(
                     modifier = Modifier
                         .size(38.dp)
                         .clip(CircleShape)
                         .background(AppGreen.copy(alpha = 0.2f))
-                        .border(2.dp, AppGreen, CircleShape),
+                        .border(2.dp, AppGreen, CircleShape)
+                        .clickable { onProfileClick() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

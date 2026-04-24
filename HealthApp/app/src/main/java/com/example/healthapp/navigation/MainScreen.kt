@@ -21,11 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.healthapp.auth.domain.model.User
+import com.example.healthapp.auth.presentation.AuthUiState
 import com.example.healthapp.dashboard.presentation.DashboardViewModel
 import com.example.healthapp.dashboard.presentation.ScreenTimeScreen
 import com.example.healthapp.plans.navigation.PlansNavGraph
-import com.example.healthapp.profile.presentation.ProfileScreen
+import com.example.healthapp.profile.navigation.ProfileNavGraph
 import com.example.healthapp.ui.theme.AppGreen
 import com.example.healthapp.ui.theme.Poppins
 
@@ -38,7 +38,11 @@ private enum class MainTab(val label: String, val icon: ImageVector) {
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    user: User?,
+    authState: AuthUiState,
+    onSaveProfile: (name: String, phone: String?, ageRange: String?) -> Unit,
+    onUploadPhoto: (ByteArray) -> Unit,
+    onClearError: () -> Unit,
+    onResetProfileUpdated: () -> Unit,
     onLogout: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(MainTab.STATS) }
@@ -61,12 +65,22 @@ fun MainScreen(
                         state = dashboardState,
                         onTabSelected = dashboardViewModel::selectTab,
                         onDateSelected = dashboardViewModel::selectDate,
-                        onRefreshPermission = dashboardViewModel::refreshPermission
+                        onRefreshPermission = dashboardViewModel::refreshPermission,
+                        onProfileClick = { selectedTab = MainTab.PROFILE }
                     )
                 }
-                MainTab.HOME -> PlansNavGraph(modifier = Modifier.fillMaxSize())
-                MainTab.PROFILE -> ProfileScreen(
-                    user = user,
+                MainTab.HOME -> PlansNavGraph(
+                    modifier = Modifier.fillMaxSize(),
+                    user = authState.user,
+                    onProfileClick = { selectedTab = MainTab.PROFILE }
+                )
+                MainTab.PROFILE -> ProfileNavGraph(
+                    modifier = Modifier.fillMaxSize(),
+                    authState = authState,
+                    onSaveProfile = onSaveProfile,
+                    onUploadPhoto = onUploadPhoto,
+                    onClearError = onClearError,
+                    onResetProfileUpdated = onResetProfileUpdated,
                     onLogout = onLogout
                 )
             }

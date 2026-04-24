@@ -259,7 +259,13 @@ fun AppNavGraph(modifier: Modifier = Modifier) {
 
         composable(Routes.MAIN) {
             MainScreen(
-                user = authState.user,
+                authState = authState,
+                onSaveProfile = { name, phone, ageRange ->
+                    authViewModel.saveProfile(name, phone, ageRange)
+                },
+                onUploadPhoto = { bytes -> authViewModel.uploadProfilePhoto(bytes) },
+                onClearError = { authViewModel.clearError() },
+                onResetProfileUpdated = { authViewModel.resetProfileUpdated() },
                 onLogout = {
                     navController.navigate(Routes.WELCOME) {
                         popUpTo(0) { inclusive = true }

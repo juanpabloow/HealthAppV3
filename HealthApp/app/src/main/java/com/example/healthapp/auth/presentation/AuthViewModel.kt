@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthapp.auth.domain.model.User
 import com.example.healthapp.auth.domain.usecase.GetCurrentUserUseCase
+import com.example.healthapp.auth.domain.usecase.GetUserProfileUseCase
 import com.example.healthapp.auth.domain.usecase.SaveUserProfileUseCase
 import com.example.healthapp.auth.domain.usecase.SignInWithEmailUseCase
 import com.example.healthapp.auth.domain.usecase.SignUpWithEmailUseCase
@@ -21,7 +22,8 @@ class AuthViewModel @Inject constructor(
     private val signInWithEmailUseCase: SignInWithEmailUseCase,
     private val saveUserProfileUseCase: SaveUserProfileUseCase,
     private val uploadProfilePhotoUseCase: UploadProfilePhotoUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthUiState())
@@ -31,6 +33,16 @@ class AuthViewModel @Inject constructor(
         val currentUid = getCurrentUserUseCase()
         if (currentUid != null) {
             _state.update { it.copy(isAuthenticated = true) }
+            loadCurrentUser(currentUid)
+        }
+    }
+
+    private fun loadCurrentUser(uid: String) {
+        viewModelScope.launch {
+            getUserProfileUseCase(uid)
+                .onSuccess { user ->
+                    if (user != null) _state.update { it.copy(user = user) }
+                }
         }
     }
 
@@ -79,7 +91,7 @@ class AuthViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
             saveUserProfileUseCase(updatedUser)
                 .onSuccess {
-                    _state.update { it.copy(isLoading = false, user = updatedUser) }
+                    _state.update { it.copy(isLoading = false, user = updatedUser, isProfileUpdated = true) }
                 }
                 .onFailure { e ->
                     _state.update { it.copy(isLoading = false, error = e.message) }
@@ -109,5 +121,9 @@ class AuthViewModel @Inject constructor(
 
     fun clearError() {
         _state.update { it.copy(error = null) }
+    }
+
+    fun resetProfileUpdated() {
+        _state.update { it.copy(isProfileUpdated = false) }
     }
 }
