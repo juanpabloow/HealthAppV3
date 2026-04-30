@@ -1,53 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Viewport 92×92.
+    The original logo occupies x=[166,227] y=[39,100] (61×61 units) in the SVG.
+    We translate by (-150.75, -23.75) so the logo sits at (15.25,15.25)→(76.25,76.25)
+    inside this 92×92 viewport, which maps to the 18dp–90dp adaptive-icon safe zone
+    when drawn on a 108dp canvas.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
+    android:viewportWidth="105"
+    android:viewportHeight="105">
 
-    <!--
-        Safe zone: 18dp inset on all sides (72×72 center square).
-        All content should be within (18,18) → (90,90).
-        We use viewportWidth=108 so paths work in the same space.
-    -->
-
-    <!-- Large leaf body — fills the safe zone -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="
-            M54,82
-            C36,82 26,68 26,54
-            C26,36 42,24 62,24
-            C78,24 86,34 86,48
-            C86,66 70,82 54,82Z" />
-
-    <!-- Leaf vein — stem going down-right -->
-    <path
-        android:fillColor="#2E7D32"
-        android:strokeColor="#2E7D32"
-        android:strokeWidth="2.5"
-        android:pathData="M54,78 Q58,62 70,44"
-        android:strokeLineCap="round" />
-
-    <!-- Left vein -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#2E7D32"
-        android:strokeWidth="1.8"
-        android:pathData="M54,72 Q46,60 36,52"
-        android:strokeLineCap="round" />
-
-    <!-- Right vein -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#2E7D32"
-        android:strokeWidth="1.8"
-        android:pathData="M60,60 Q64,50 72,44"
-        android:strokeLineCap="round" />
-
-    <!-- Small dot / seed at the bottom of the leaf -->
-    <path
-        android:fillColor="#4CAF50"
-        android:pathData="M54,84m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <group
+        android:translateX="-144"
+        android:translateY="-17">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M174.614,91.384C171.922,88.692 169.814,85.581 168.288,82.051C166.763,78.521 166,74.871 166,71.102C166,67.332 166.718,63.608 168.154,59.928C169.589,56.249 171.922,52.793 175.152,49.562C177.246,47.468 179.833,45.673 182.914,44.178C185.995,42.682 189.644,41.5 193.861,40.633C198.078,39.765 202.894,39.242 208.308,39.062C213.721,38.883 219.778,39.092 226.478,39.69C226.956,46.032 227.106,51.866 226.927,57.191C226.747,62.516 226.254,67.317 225.446,71.595C224.638,75.873 223.502,79.613 222.036,82.814C220.571,86.015 218.761,88.692 216.608,90.846C213.437,94.017 210.072,96.335 206.513,97.801C202.954,99.267 199.32,100 195.611,100C191.723,100 187.924,99.237 184.215,97.711C180.506,96.186 177.306,94.077 174.614,91.384ZM184.664,89.948C186.399,90.966 188.178,91.698 190.003,92.147C191.827,92.596 193.697,92.82 195.611,92.82C198.363,92.82 201.084,92.267 203.776,91.16C206.468,90.053 209.04,88.273 211.493,85.82C212.57,84.743 213.662,83.232 214.768,81.288C215.875,79.343 216.832,76.801 217.64,73.659C218.447,70.518 219.06,66.719 219.479,62.262C219.898,57.804 219.958,52.494 219.658,46.332C216.727,46.212 213.422,46.167 209.743,46.197C206.064,46.227 202.4,46.511 198.751,47.05C195.102,47.588 191.633,48.456 188.343,49.652C185.053,50.849 182.361,52.494 180.267,54.588C177.575,57.281 175.721,59.943 174.704,62.576C173.687,65.208 173.178,67.751 173.178,70.204C173.178,73.734 173.851,76.83 175.197,79.493C176.543,82.155 177.725,84.025 178.742,85.102C181.254,80.316 184.574,75.724 188.702,71.326C192.829,66.928 197.645,63.324 203.148,60.512C198.841,64.281 195.087,68.544 191.887,73.3C188.687,78.057 186.279,83.606 184.664,89.948Z" />
+    </group>
 
 </vector>

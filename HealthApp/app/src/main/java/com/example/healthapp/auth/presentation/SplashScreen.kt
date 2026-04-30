@@ -38,13 +38,13 @@ fun SplashScreen(
             modifier = Modifier
                 .size(120.dp)
                 .clip(RoundedCornerShape(28.dp))
-                .background(AppGreen),
+                .background(Color(0xFF5ECF2A)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_leaf),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "App Logo",
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier.size(90.dp),
                 tint = Color.White
             )
         }
