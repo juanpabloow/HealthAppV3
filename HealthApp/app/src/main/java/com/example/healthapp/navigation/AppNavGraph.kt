@@ -18,7 +18,6 @@ import com.example.healthapp.auth.presentation.CreateProfileScreen
 import com.example.healthapp.auth.presentation.EnterCodeScreen
 import com.example.healthapp.auth.presentation.LoginScreen
 import com.example.healthapp.auth.presentation.SignUpScreen
-import com.example.healthapp.auth.presentation.SplashScreen
 import com.example.healthapp.auth.presentation.VerificationCodeScreen
 import com.example.healthapp.auth.presentation.WelcomeScreen
 import com.example.healthapp.dashboard.presentation.PermissionsScreen
@@ -29,7 +28,6 @@ import com.example.healthapp.survey.presentation.SurveyViewModel
 import com.example.healthapp.survey.presentation.SurveyWorriesScreen
 
 private object Routes {
-    const val SPLASH = "splash"
     const val WELCOME = "welcome"
     const val LOGIN = "login"
     const val SIGN_UP = "sign_up"
@@ -55,23 +53,20 @@ fun AppNavGraph(modifier: Modifier = Modifier) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.state.collectAsState()
 
+    // Redirect to MAIN immediately if already authenticated (no second splash)
+    LaunchedEffect(authState.isAuthenticated) {
+        if (authState.isAuthenticated) {
+            navController.navigate(Routes.MAIN) {
+                popUpTo(Routes.WELCOME) { inclusive = true }
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Routes.SPLASH,
+        startDestination = Routes.WELCOME,
         modifier = modifier
     ) {
-
-        // ── Splash ──────────────────────────────────────────────────────
-        composable(Routes.SPLASH) {
-            SplashScreen(
-                onNavigateToWelcome = {
-                    val dest = if (authState.isAuthenticated) Routes.MAIN else Routes.WELCOME
-                    navController.navigate(dest) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
-                    }
-                }
-            )
-        }
 
         // ── Auth ────────────────────────────────────────────────────────
         composable(Routes.WELCOME) {

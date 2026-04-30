@@ -9,17 +9,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -49,23 +50,25 @@ fun ProfileScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F8F8))
+            .background(Color(0xFFF5F5F5))
             .verticalScroll(rememberScrollState())
     ) {
-        // ── Header label ────────────────────────────────────────────────
+        // ── Header ───────────────────────────────────────────────────────
         Text(
             text = "Profile",
-            fontSize = 13.sp,
-            color = Color.Gray,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
             fontFamily = Poppins,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
+            color = Color(0xFF1A1A1A),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp)
         )
 
-        // ── Avatar card ─────────────────────────────────────────────────
+        // ── User card ────────────────────────────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 16.dp)
+                .shadow(4.dp, RoundedCornerShape(20.dp), clip = false)
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
                 .padding(vertical = 28.dp),
@@ -74,9 +77,9 @@ fun ProfileScreen(
             // Avatar
             Box(
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(110.dp)
                     .clip(CircleShape)
-                    .background(AppGreen.copy(alpha = 0.15f))
+                    .background(AppGreen.copy(alpha = 0.12f))
                     .border(3.dp, AppGreen, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
@@ -90,7 +93,7 @@ fun ProfileScreen(
                 } else {
                     Text(
                         text = initials,
-                        fontSize = 32.sp,
+                        fontSize = 38.sp,
                         fontWeight = FontWeight.Bold,
                         color = AppGreen,
                         fontFamily = Poppins
@@ -98,18 +101,18 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(Modifier.height(16.dp))
 
             // Name
             Text(
                 text = displayName,
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = Poppins,
-                color = Color.Black
+                color = Color(0xFF1A1A1A)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(Modifier.height(10.dp))
 
             // Level badges
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -117,75 +120,107 @@ fun ProfileScreen(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .border(1.dp, Color(0xFFDDDDDD), RoundedCornerShape(50))
-                        .padding(horizontal = 14.dp, vertical = 5.dp)
+                        .padding(horizontal = 16.dp, vertical = 5.dp)
                 ) {
-                    Text("Level 1", fontSize = 12.sp, fontFamily = Poppins, color = Color.DarkGray, fontWeight = FontWeight.Medium)
+                    Text(
+                        "Level 2",
+                        fontSize = 12.sp,
+                        fontFamily = Poppins,
+                        color = Color.DarkGray,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(AppGreen)
-                        .padding(horizontal = 14.dp, vertical = 5.dp)
+                        .padding(horizontal = 16.dp, vertical = 5.dp)
                 ) {
-                    Text("Rookie", fontSize = 12.sp, fontFamily = Poppins, color = Color.White, fontWeight = FontWeight.Medium)
+                    Text(
+                        "Rookie",
+                        fontSize = 12.sp,
+                        fontFamily = Poppins,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Next: Explorer, 2h more needed",
+                text = "Next: Captain, 5h more needed",
                 fontSize = 12.sp,
                 color = AppGreen,
                 fontFamily = Poppins
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
-        // ── Menu items ──────────────────────────────────────────────────
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(Color.White)
-        ) {
-            ProfileMenuItem(icon = Icons.Default.Lock, label = "Permissions", onClick = onPermissions)
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF0F0F0))
-            ProfileMenuItem(icon = Icons.Default.Person, label = "Edit Profile", onClick = onEditProfile)
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF0F0F0))
-            ProfileMenuItem(icon = Icons.Default.Settings, label = "Languages", onClick = {})
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF0F0F0))
-            ProfileMenuItem(icon = Icons.Default.Info, label = "About us", onClick = {})
-        }
+        // ── Menu items (each in its own card) ───────────────────────────
+        ProfileMenuCard(
+            icon = Icons.Default.Lock,
+            label = "Permissions",
+            onClick = onPermissions
+        )
+        Spacer(Modifier.height(10.dp))
+        ProfileMenuCard(
+            icon = Icons.Default.Edit,
+            label = "Edit Profile",
+            onClick = onEditProfile
+        )
+        Spacer(Modifier.height(10.dp))
+        ProfileMenuCard(
+            icon = Icons.Default.Translate,
+            label = "Languages",
+            onClick = {}
+        )
+        Spacer(Modifier.height(10.dp))
+        ProfileMenuCard(
+            icon = Icons.Default.Info,
+            label = "About us",
+            onClick = {}
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
-        // ── Action buttons ──────────────────────────────────────────────
+        // ── Action buttons ───────────────────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Donate
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .shadow(2.dp, RoundedCornerShape(14.dp), clip = false)
                     .clip(RoundedCornerShape(14.dp))
-                    .border(1.dp, Color(0xFFDDDDDD), RoundedCornerShape(14.dp))
                     .background(Color.White)
                     .clickable { }
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text("$", fontSize = 16.sp, color = AppGreen, fontWeight = FontWeight.Bold)
-                    Text("Donate", fontSize = 14.sp, fontFamily = Poppins, color = Color.DarkGray, fontWeight = FontWeight.Medium)
+                    Text(
+                        "$",
+                        fontSize = 16.sp,
+                        color = AppGreen,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Poppins
+                    )
+                    Text(
+                        "Donate",
+                        fontSize = 14.sp,
+                        fontFamily = Poppins,
+                        color = AppGreen,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
 
@@ -193,11 +228,11 @@ fun ProfileScreen(
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .shadow(2.dp, RoundedCornerShape(14.dp), clip = false)
                     .clip(RoundedCornerShape(14.dp))
-                    .border(1.dp, Color(0xFFDDDDDD), RoundedCornerShape(14.dp))
                     .background(Color.White)
                     .clickable { onLogout() }
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Row(
@@ -205,34 +240,67 @@ fun ProfileScreen(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.Default.Logout,
                         contentDescription = null,
                         tint = Color(0xFFE53935),
                         modifier = Modifier.size(16.dp)
                     )
-                    Text("Logout", fontSize = 14.sp, fontFamily = Poppins, color = Color(0xFFE53935), fontWeight = FontWeight.Medium)
+                    Text(
+                        "Logout",
+                        fontSize = 14.sp,
+                        fontFamily = Poppins,
+                        color = Color(0xFFE53935),
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(Modifier.height(32.dp))
     }
 }
 
 @Composable
-private fun ProfileMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
+private fun ProfileMenuCard(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .shadow(2.dp, RoundedCornerShape(16.dp), clip = false)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
             .clickable { onClick() }
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(horizontal = 20.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            Icon(imageVector = icon, contentDescription = null, tint = Color.DarkGray, modifier = Modifier.size(20.dp))
-            Text(label, fontSize = 15.sp, fontFamily = Poppins, fontWeight = FontWeight.Normal, color = Color.Black)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color(0xFF555555),
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = label,
+                fontSize = 15.sp,
+                fontFamily = Poppins,
+                fontWeight = FontWeight.Normal,
+                color = Color(0xFF1A1A1A)
+            )
         }
-        Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null, tint = Color(0xFFBBBBBB), modifier = Modifier.size(20.dp))
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowRight,
+            contentDescription = null,
+            tint = Color(0xFFBBBBBB),
+            modifier = Modifier.size(22.dp)
+        )
     }
 }

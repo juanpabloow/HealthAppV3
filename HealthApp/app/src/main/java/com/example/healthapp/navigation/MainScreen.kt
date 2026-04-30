@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,7 +32,7 @@ import com.example.healthapp.ui.theme.AppGreen
 import com.example.healthapp.ui.theme.Poppins
 
 private enum class MainTab(val label: String, val icon: ImageVector) {
-    STATS("Stats", Icons.Default.BarChart),
+    STATS("Stats", Icons.Default.ShowChart),
     HOME("", Icons.Default.Favorite),
     PROFILE("Profile", Icons.Default.Person)
 }
@@ -95,22 +95,21 @@ private val CenterColor = Color(0xFF5ECF2A)
 
 @Composable
 private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit) {
-    // Extra top padding leaves room for the circle to protrude upward
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Transparent)
-            .padding(start = 20.dp, end = 20.dp, bottom = 12.dp, top = 20.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 10.dp, top = 22.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-        // ── Pill bar ────────────────────────────────────────────────────
+        // ── Pill bar ─────────────────────────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(10.dp, RoundedCornerShape(100.dp), clip = false)
+                .shadow(6.dp, RoundedCornerShape(100.dp), clip = false)
                 .clip(RoundedCornerShape(100.dp))
                 .background(BarColor)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -121,7 +120,7 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
                 onClick = { onTabSelected(MainTab.STATS) }
             )
             // Gap where the circle sits
-            Spacer(modifier = Modifier.size(56.dp))
+            Spacer(modifier = Modifier.size(70.dp))
 
             BottomNavItem(
                 icon = MainTab.PROFILE.icon,
@@ -131,11 +130,11 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
             )
         }
 
-        // ── Center circle — protrudes above the bar ──────────────────
+        // ── Center circle ─────────────────────────────────────────────
         Box(
             modifier = Modifier
-                .size(60.dp)
-                .offset(y = (-18).dp)          // pop out above the bar
+                .size(82.dp)
+                .offset(y = (-20).dp)
                 .shadow(8.dp, CircleShape, clip = false)
                 .clip(CircleShape)
                 .background(CenterColor)
@@ -146,7 +145,7 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "Home",
                 tint = Color.White,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(46.dp)
             )
         }
     }
@@ -159,17 +158,20 @@ private fun BottomNavItem(
     selected: Boolean,
     onClick: () -> Unit
 ) {
+    val activeColor  = Color.White
+    val inactiveColor = Color.White.copy(alpha = 0.55f)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(10.dp))
             .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 14.dp, vertical = 5.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = if (selected) Color.White else Color.White.copy(alpha = 0.55f),
+            tint = if (selected) activeColor else inactiveColor,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
@@ -178,7 +180,16 @@ private fun BottomNavItem(
             fontSize = 11.sp,
             fontFamily = Poppins,
             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-            color = if (selected) Color.White else Color.White.copy(alpha = 0.55f)
+            color = if (selected) activeColor else inactiveColor
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        // Underline indicator for selected tab
+        Box(
+            modifier = Modifier
+                .width(16.dp)
+                .height(2.dp)
+                .clip(RoundedCornerShape(1.dp))
+                .background(if (selected) activeColor else Color.Transparent)
         )
     }
 }
