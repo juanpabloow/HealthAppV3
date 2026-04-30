@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    108×108 viewport. Translation (-144, -17) pre-applied to path coordinates.
+    Logo fits in safe zone ~(22,22)→(83,83) out of 108×108.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!--
-        Safe zone: 18dp inset on all sides (72×72 center square).
-        All content should be within (18,18) → (90,90).
-        We use viewportWidth=108 so paths work in the same space.
-    -->
-
-    <!-- Large leaf body — fills the safe zone -->
     <path
         android:fillColor="#FFFFFF"
         android:pathData="
-            M54,82
-            C36,82 26,68 26,54
-            C26,36 42,24 62,24
-            C78,24 86,34 86,48
-            C86,66 70,82 54,82Z" />
-
-    <!-- Leaf vein — stem going down-right -->
-    <path
-        android:fillColor="#2E7D32"
-        android:strokeColor="#2E7D32"
-        android:strokeWidth="2.5"
-        android:pathData="M54,78 Q58,62 70,44"
-        android:strokeLineCap="round" />
-
-    <!-- Left vein -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#2E7D32"
-        android:strokeWidth="1.8"
-        android:pathData="M54,72 Q46,60 36,52"
-        android:strokeLineCap="round" />
-
-    <!-- Right vein -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#2E7D32"
-        android:strokeWidth="1.8"
-        android:pathData="M60,60 Q64,50 72,44"
-        android:strokeLineCap="round" />
-
-    <!-- Small dot / seed at the bottom of the leaf -->
-    <path
-        android:fillColor="#4CAF50"
-        android:pathData="M54,84m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+M30.614,74.384
+C27.922,71.692 25.814,68.581 24.288,65.051
+C22.763,61.521 22,57.871 22,54.102
+C22,50.332 22.718,46.608 24.154,42.928
+C25.589,39.249 27.922,35.793 31.152,32.562
+C33.246,30.468 35.833,28.673 38.914,27.178
+C41.995,25.682 45.644,24.5 49.861,23.633
+C54.078,22.765 58.894,22.242 64.308,22.062
+C69.721,21.883 75.778,22.092 82.478,22.69
+C82.956,29.032 83.106,34.866 82.927,40.191
+C82.747,45.516 82.254,50.317 81.446,54.595
+C80.638,58.873 79.502,62.613 78.036,65.814
+C76.571,69.015 74.761,71.692 72.608,73.846
+C69.437,77.017 66.072,79.335 62.513,80.801
+C58.954,82.267 55.32,83 51.611,83
+C47.723,83 43.924,82.237 40.215,80.711
+C36.506,79.186 33.306,77.077 30.614,74.384Z
+M40.664,72.948
+C42.399,73.966 44.178,74.698 46.003,75.147
+C47.827,75.596 49.697,75.82 51.611,75.82
+C54.363,75.82 57.084,75.267 59.776,74.16
+C62.468,73.053 65.04,71.273 67.493,68.82
+C68.57,67.743 69.662,66.232 70.768,64.288
+C71.875,62.343 72.832,59.801 73.64,56.659
+C74.447,53.518 75.06,49.719 75.479,45.262
+C75.898,40.804 75.958,35.494 75.658,29.332
+C72.727,29.212 69.422,29.167 65.743,29.197
+C62.064,29.227 58.4,29.511 54.751,30.05
+C51.102,30.588 47.633,31.456 44.343,32.652
+C41.053,33.849 38.361,35.494 36.267,37.588
+C33.575,40.281 31.721,42.943 30.704,45.576
+C29.687,48.208 29.178,50.751 29.178,53.204
+C29.178,56.734 29.851,59.83 31.197,62.493
+C32.543,65.155 33.725,67.025 34.742,68.102
+C37.254,63.316 40.574,58.724 44.702,54.326
+C48.829,49.928 53.645,46.324 59.148,43.512
+C54.841,47.281 51.087,51.544 47.887,56.3
+C44.687,61.057 42.279,66.606 40.664,72.948Z" />
 
 </vector>

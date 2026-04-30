@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,7 +32,7 @@ import com.example.healthapp.ui.theme.AppGreen
 import com.example.healthapp.ui.theme.Poppins
 
 private enum class MainTab(val label: String, val icon: ImageVector) {
-    STATS("Stats", Icons.Default.Star),
+    STATS("Stats", Icons.Default.BarChart),
     HOME("", Icons.Default.Favorite),
     PROFILE("Profile", Icons.Default.Person)
 }

@@ -557,6 +557,233 @@ private fun EmptyPlansPlaceholder(onCreateClick: () -> Unit) {
     }
 }
 
+// ── Plans Calendar View (tab) ─────────────────────────────────────────────────
+
+@Composable
+private fun PlansCalendarView(plans: List<Plan>) {
+    var displayMonth by remember { mutableStateOf(Calendar.getInstance()) }
+
+    val activePlans = plans.filter { it.status == "active" }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Month navigation
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = {
+                    displayMonth = (displayMonth.clone() as Calendar).apply {
+                        add(Calendar.MONTH, -1)
+                    }
+                }) {
+                    Text("‹", fontSize = 22.sp, color = Color(0xFF555555))
+                }
+                val monthFmt = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault())
+                Text(
+                    monthFmt.format(displayMonth.time),
+                    fontFamily = Poppins,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp
+                )
+                IconButton(onClick = {
+                    displayMonth = (displayMonth.clone() as Calendar).apply {
+                        add(Calendar.MONTH, 1)
+                    }
+                }) {
+                    Text("›", fontSize = 22.sp, color = Color(0xFF555555))
+                }
+            }
+
+            // Day-of-week labels
+            Row(modifier = Modifier.fillMaxWidth()) {
+                listOf("S", "M", "T", "W", "T", "F", "S").forEach { label ->
+                    Text(
+                        label,
+                        modifier = Modifier.weight(1f),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        fontFamily = Poppins,
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // Calendar grid
+            AllPlansCalendarGrid(plans = activePlans, month = displayMonth)
+
+            Spacer(Modifier.height(12.dp))
+
+            // Legend — one dot per plan color
+            if (activePlans.isNotEmpty()) {
+                Text(
+                    "Active Plans",
+                    fontFamily = Poppins,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
+                    color = Color(0xFF1A1A1A)
+                )
+                Spacer(Modifier.height(8.dp))
+                activePlans.forEachIndexed { index, plan ->
+                    val color = PlanCardColors[index % PlanCardColors.size]
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "${plan.icon} ${plan.name}",
+                            fontFamily = Poppins,
+                            fontSize = 12.sp,
+                            color = Color(0xFF555555)
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
+                }
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "No active plans",
+                        fontFamily = Poppins,
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+    }
+
+    Spacer(Modifier.height(12.dp))
+}
+
+@Composable
+private fun AllPlansCalendarGrid(plans: List<Plan>, month: Calendar) {
+    val today = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+    }
+
+    val firstOfMonth = (month.clone() as Calendar).apply {
+        set(Calendar.DAY_OF_MONTH, 1)
+        set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+    }
+    val startDow = firstOfMonth.get(Calendar.DAY_OF_WEEK) - 1
+    val daysInMonth = firstOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val totalCells = startDow + daysInMonth
+    val rows = (totalCells + 6) / 7
+
+    Column {
+        repeat(rows) { row ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                repeat(7) { col ->
+                    val cellIndex = row * 7 + col
+                    val dayNum = cellIndex - startDow + 1
+
+                    if (dayNum < 1 || dayNum > daysInMonth) {
+                        Box(modifier = Modifier.weight(1f).aspectRatio(1f)) {}
+                    } else {
+                        val dayCal = (firstOfMonth.clone() as Calendar).apply {
+                            set(Calendar.DAY_OF_MONTH, dayNum)
+                        }
+                        val dow = dayCal.get(Calendar.DAY_OF_WEEK) - 1
+                        val isToday = dayCal.timeInMillis == today.timeInMillis
+
+                        // Which plans are scheduled on this day?
+                        val scheduledPlans = plans.mapIndexedNotNull { index, plan ->
+                            val planCreated = Calendar.getInstance().apply {
+                                timeInMillis = plan.createdAt
+                                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+                            }
+                            if (dow in plan.scheduleDays && !dayCal.before(planCreated)) {
+                                PlanCardColors[index % PlanCardColors.size]
+                            } else null
+                        }
+
+                        MultiPlanCalendarDay(
+                            modifier = Modifier.weight(1f),
+                            dayNum = dayNum,
+                            isToday = isToday,
+                            planColors = scheduledPlans
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MultiPlanCalendarDay(
+    modifier: Modifier = Modifier,
+    dayNum: Int,
+    isToday: Boolean,
+    planColors: List<Color>
+) {
+    val hasPlans = planColors.isNotEmpty()
+    val bgColor = when {
+        isToday -> Color(0xFF1E88E5)
+        hasPlans -> planColors.first().copy(alpha = 0.15f)
+        else -> Color.Transparent
+    }
+    val textColor = when {
+        isToday -> Color.White
+        hasPlans -> planColors.first()
+        else -> Color(0xFFAAAAAA)
+    }
+
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .padding(3.dp)
+            .clip(CircleShape)
+            .background(bgColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = dayNum.toString(),
+                fontFamily = Poppins,
+                fontSize = 12.sp,
+                fontWeight = if (isToday || hasPlans) FontWeight.Bold else FontWeight.Normal,
+                color = textColor
+            )
+            // Dots for each plan
+            if (hasPlans && !isToday) {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    planColors.take(3).forEach { color ->
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                        )
+                        Spacer(Modifier.width(1.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 private fun weeklyProgress(plan: Plan): Pair<Int, Int> {
