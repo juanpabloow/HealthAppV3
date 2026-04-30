@@ -89,6 +89,11 @@ fun PlanListScreen(
                         CircularProgressIndicator(color = AppGreen)
                     }
                 }
+            } else if (selectedTab == 1) {
+                // Calendar tab
+                item {
+                    PlansCalendarView(plans = state.plans)
+                }
             } else if (state.plans.isEmpty()) {
                 item { EmptyPlansPlaceholder(onCreateClick) }
             } else {

@@ -17,9 +17,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.healthapp.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.healthapp.auth.presentation.AuthUiState
 import com.example.healthapp.dashboard.presentation.DashboardViewModel
@@ -141,10 +143,10 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = MainTab.HOME.icon,
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "Home",
                 tint = Color.White,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(36.dp)
             )
         }
     }

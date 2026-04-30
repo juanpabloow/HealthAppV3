@@ -52,6 +52,11 @@ fun PlansNavGraph(
 ) {
     val navController = rememberNavController()
 
+    // Single shared PlanViewModel — all routes read from and write to the same instance
+    // so edits, deletes, and creates are immediately visible everywhere.
+    val planVm: PlanViewModel = hiltViewModel()
+    val state by planVm.state.collectAsState()
+
     NavHost(
         navController = navController,
         startDestination = PlanRoutes.LIST,
@@ -59,16 +64,13 @@ fun PlansNavGraph(
     ) {
 
         // ── Plan list ────────────────────────────────────────────────
-        composable(route = PlanRoutes.LIST) { _: NavBackStackEntry ->
-            val planVm: PlanViewModel = hiltViewModel()
-            val state by planVm.state.collectAsState()
-
+        composable(route = PlanRoutes.LIST) {
             PlanListScreen(
-                state         = state,
-                user          = user,
-                onPlanClick   = { planId -> navController.navigate(PlanRoutes.detail(planId)) },
-                onCreateClick = { navController.navigate(PlanRoutes.CREATE_GRAPH) },
-                onDeletePlan  = { planId -> planVm.deletePlan(planId) },
+                state          = state,
+                user           = user,
+                onPlanClick    = { planId -> navController.navigate(PlanRoutes.detail(planId)) },
+                onCreateClick  = { navController.navigate(PlanRoutes.CREATE_GRAPH) },
+                onDeletePlan   = { planId -> planVm.deletePlan(planId) },
                 onProfileClick = onProfileClick
             )
         }
@@ -79,8 +81,6 @@ fun PlansNavGraph(
             arguments = listOf(navArgument("planId") { type = NavType.StringType })
         ) { entry: NavBackStackEntry ->
             val planId = entry.arguments?.getString("planId") ?: return@composable
-            val planVm: PlanViewModel = hiltViewModel()
-            val state by planVm.state.collectAsState()
 
             LaunchedEffect(planId) { planVm.loadSessions(planId) }
 
@@ -114,8 +114,6 @@ fun PlansNavGraph(
             arguments = listOf(navArgument("planId") { type = NavType.StringType })
         ) { entry: NavBackStackEntry ->
             val planId = entry.arguments?.getString("planId") ?: return@composable
-            val planVm: PlanViewModel = hiltViewModel()
-            val state by planVm.state.collectAsState()
 
             val plan = state.plans.find { it.id == planId }
             if (plan == null) {
@@ -133,16 +131,14 @@ fun PlansNavGraph(
             arguments = listOf(navArgument("planId") { type = NavType.StringType })
         ) { entry: NavBackStackEntry ->
             val planId   = entry.arguments?.getString("planId") ?: return@composable
-            val planVm: PlanViewModel          = hiltViewModel()
-            val createVm: CreatePlanViewModel  = hiltViewModel()
-            val state     by planVm.state.collectAsState()
+            val createVm: CreatePlanViewModel = hiltViewModel()
             val editState by createVm.state.collectAsState()
 
             val plan = state.plans.find { it.id == planId }
             if (plan != null) {
                 LaunchedEffect(editState.isSaved) {
                     if (editState.isSaved) {
-                        planVm.reloadAfterSave()
+                        planVm.reloadAfterSave()   // refreshes the shared VM → list updates instantly
                         createVm.reset()
                         navController.popBackStack()
                     }
@@ -166,10 +162,10 @@ fun PlansNavGraph(
                     navController.getBackStackEntry(PlanRoutes.CREATE_GRAPH)
                 }
                 val createVm: CreatePlanViewModel = hiltViewModel(graphEntry)
-                val state by createVm.state.collectAsState()
+                val createState by createVm.state.collectAsState()
 
                 CreatePlanStep1Screen(
-                    state               = state,
+                    state               = createState,
                     onNameChange        = createVm::setName,
                     onIconSelect        = createVm::setIcon,
                     onDescriptionChange = createVm::setDescription,
@@ -189,10 +185,10 @@ fun PlansNavGraph(
                     navController.getBackStackEntry(PlanRoutes.CREATE_GRAPH)
                 }
                 val createVm: CreatePlanViewModel = hiltViewModel(graphEntry)
-                val state by createVm.state.collectAsState()
+                val createState by createVm.state.collectAsState()
 
                 CreatePlanStep2Screen(
-                    state       = state,
+                    state       = createState,
                     onToggleApp = createVm::toggleBlockedApp,
                     onBack      = { createVm.prevStep(); navController.popBackStack() },
                     onNext      = { createVm.nextStep(); navController.navigate(PlanRoutes.CREATE_3) }
@@ -203,19 +199,18 @@ fun PlansNavGraph(
                 val graphEntry = remember(entry) {
                     navController.getBackStackEntry(PlanRoutes.CREATE_GRAPH)
                 }
-                val planVm: PlanViewModel         = hiltViewModel()
                 val createVm: CreatePlanViewModel = hiltViewModel(graphEntry)
-                val state by createVm.state.collectAsState()
+                val createState by createVm.state.collectAsState()
 
-                LaunchedEffect(state.isSaved) {
-                    if (state.isSaved) {
-                        planVm.reloadAfterSave()
+                LaunchedEffect(createState.isSaved) {
+                    if (createState.isSaved) {
+                        planVm.reloadAfterSave()   // same shared VM → list sees new plan immediately
                         createVm.reset()
                         navController.popBackStack(PlanRoutes.LIST, inclusive = false)
                     }
                 }
                 CreatePlanStep3Screen(
-                    state              = state,
+                    state              = createState,
                     onToggleDay        = createVm::toggleDay,
                     onStartHourChange  = createVm::setStartHour,
                     onEndHourChange    = createVm::setEndHour,
