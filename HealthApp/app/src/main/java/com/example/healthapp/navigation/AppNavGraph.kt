@@ -23,6 +23,8 @@ import com.example.healthapp.auth.presentation.WelcomeScreen
 import com.example.healthapp.dashboard.presentation.PermissionsScreen
 import com.example.healthapp.emotion.navigation.EmotionRoutes
 import com.example.healthapp.emotion.navigation.emotionGraph
+import com.example.healthapp.focus.navigation.FocusRoutes
+import com.example.healthapp.focus.navigation.focusGraph
 import com.example.healthapp.survey.presentation.SurveyActivitiesScreen
 import com.example.healthapp.survey.presentation.SurveyGoalScreen
 import com.example.healthapp.survey.presentation.SurveyMoodScreen
@@ -50,6 +52,9 @@ private object Routes {
 
     // Emotion tracker (top-level graph, full-screen)
     const val EMOTION_GRAPH = EmotionRoutes.GRAPH
+
+    // Focus sessions (top-level graph, full-screen)
+    const val FOCUS_GRAPH = FocusRoutes.GRAPH
 }
 
 @Composable
@@ -271,12 +276,19 @@ fun AppNavGraph(modifier: Modifier = Modifier) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
-                onMoodClick = { navController.navigate(Routes.EMOTION_GRAPH) }
+                onMoodClick = { navController.navigate(Routes.EMOTION_GRAPH) },
+                onFocusClick = { navController.navigate(Routes.FOCUS_GRAPH) }
             )
         }
 
         // ── Emotion Tracker (full-screen graph) ──────────────────────────
         emotionGraph(
+            navController = navController,
+            onExit = { navController.popBackStack(Routes.MAIN, inclusive = false) }
+        )
+
+        // ── Focus Sessions (full-screen graph) ───────────────────────────
+        focusGraph(
             navController = navController,
             onExit = { navController.popBackStack(Routes.MAIN, inclusive = false) }
         )

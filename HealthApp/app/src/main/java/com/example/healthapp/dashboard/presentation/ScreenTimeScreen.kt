@@ -39,7 +39,8 @@ fun ScreenTimeScreen(
     onDateSelected: (Long) -> Unit,
     onRefreshPermission: () -> Unit,
     onProfileClick: () -> Unit = {},
-    onMoodClick: () -> Unit = {}
+    onMoodClick: () -> Unit = {},
+    onFocusClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -67,6 +68,10 @@ fun ScreenTimeScreen(
         }
 
         item {
+            FocusTodayCard(onClick = onFocusClick)
+        }
+
+        item {
             when (state.selectedTab) {
                 ScreenTimeTab.DAY -> DayView(
                     state = state,
@@ -81,10 +86,35 @@ fun ScreenTimeScreen(
 
 @Composable
 private fun MoodTodayCard(onClick: () -> Unit) {
+    DashboardCtaCard(
+        emoji = "🙂",
+        title = "How are you feeling today?",
+        subtitle = "Tap to log your mood",
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun FocusTodayCard(onClick: () -> Unit) {
+    DashboardCtaCard(
+        emoji = "⏱️",
+        title = "Start a focus session",
+        subtitle = "Pomodoro timer · history · stats",
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun DashboardCtaCard(
+    emoji: String,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 8.dp)
+            .padding(horizontal = 20.dp, vertical = 6.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
             .clickable { onClick() }
@@ -98,12 +128,12 @@ private fun MoodTodayCard(onClick: () -> Unit) {
                 .background(AppGreen.copy(alpha = 0.12f)),
             contentAlignment = Alignment.Center
         ) {
-            Text("🙂", fontSize = 24.sp)
+            Text(emoji, fontSize = 24.sp)
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "How are you feeling today?",
+                text = title,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 fontFamily = Poppins,
@@ -111,7 +141,7 @@ private fun MoodTodayCard(onClick: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "Tap to log your mood",
+                text = subtitle,
                 fontSize = 12.sp,
                 color = Color.Gray,
                 fontFamily = Poppins
