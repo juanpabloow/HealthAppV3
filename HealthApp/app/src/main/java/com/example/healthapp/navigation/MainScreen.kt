@@ -47,7 +47,8 @@ fun MainScreen(
     onResetProfileUpdated: () -> Unit,
     onLogout: () -> Unit,
     onMoodClick: () -> Unit = {},
-    onFocusClick: () -> Unit = {}
+    onFocusClick: () -> Unit = {},
+    onHabitsClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(MainTab.STATS) }
 
@@ -72,7 +73,8 @@ fun MainScreen(
                         onRefreshPermission = dashboardViewModel::refreshPermission,
                         onProfileClick = { selectedTab = MainTab.PROFILE },
                         onMoodClick = onMoodClick,
-                        onFocusClick = onFocusClick
+                        onFocusClick = onFocusClick,
+                        onHabitsClick = onHabitsClick
                     )
                 }
                 MainTab.HOME -> PlansNavGraph(
@@ -87,7 +89,8 @@ fun MainScreen(
                     onUploadPhoto = onUploadPhoto,
                     onClearError = onClearError,
                     onResetProfileUpdated = onResetProfileUpdated,
-                    onLogout = onLogout
+                    onLogout = onLogout,
+                    onHabitsClick = onHabitsClick
                 )
             }
         }

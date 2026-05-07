@@ -40,7 +40,8 @@ fun ScreenTimeScreen(
     onRefreshPermission: () -> Unit,
     onProfileClick: () -> Unit = {},
     onMoodClick: () -> Unit = {},
-    onFocusClick: () -> Unit = {}
+    onFocusClick: () -> Unit = {},
+    onHabitsClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -72,6 +73,10 @@ fun ScreenTimeScreen(
         }
 
         item {
+            HabitsTodayCard(onClick = onHabitsClick)
+        }
+
+        item {
             when (state.selectedTab) {
                 ScreenTimeTab.DAY -> DayView(
                     state = state,
@@ -100,6 +105,16 @@ private fun FocusTodayCard(onClick: () -> Unit) {
         emoji = "⏱️",
         title = "Start a focus session",
         subtitle = "Pomodoro timer · history · stats",
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun HabitsTodayCard(onClick: () -> Unit) {
+    DashboardCtaCard(
+        emoji = "🌱",
+        title = "Build daily habits",
+        subtitle = "Streaks · check-ins · heatmap",
         onClick = onClick
     )
 }
