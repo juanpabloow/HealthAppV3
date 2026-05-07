@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -39,7 +38,6 @@ fun ProfileScreen(
     user: User?,
     onEditProfile: () -> Unit = {},
     onPermissions: () -> Unit = {},
-    onHabits: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     val displayName = user?.displayName ?: user?.email?.substringBefore("@") ?: "User"
@@ -171,12 +169,6 @@ fun ProfileScreen(
             icon = Icons.Default.Edit,
             label = "Edit Profile",
             onClick = onEditProfile
-        )
-        Spacer(Modifier.height(10.dp))
-        ProfileMenuCard(
-            icon = Icons.Default.CheckCircle,
-            label = "My Habits",
-            onClick = onHabits
         )
         Spacer(Modifier.height(10.dp))
         ProfileMenuCard(

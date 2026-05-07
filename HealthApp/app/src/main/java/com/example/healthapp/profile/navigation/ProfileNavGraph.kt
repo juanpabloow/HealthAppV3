@@ -23,8 +23,7 @@ fun ProfileNavGraph(
     onUploadPhoto: (ByteArray) -> Unit,
     onClearError: () -> Unit,
     onResetProfileUpdated: () -> Unit,
-    onLogout: () -> Unit,
-    onHabitsClick: () -> Unit = {}
+    onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -37,7 +36,6 @@ fun ProfileNavGraph(
             ProfileScreen(
                 user = authState.user,
                 onEditProfile = { navController.navigate(ProfileRoutes.EDIT) },
-                onHabits = onHabitsClick,
                 onLogout = onLogout
             )
         }

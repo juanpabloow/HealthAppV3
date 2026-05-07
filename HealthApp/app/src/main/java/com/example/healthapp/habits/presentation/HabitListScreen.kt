@@ -20,12 +20,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,14 +45,13 @@ private val PageBg = Color(0xFFF5F7FA)
 fun HabitListScreen(
     modifier: Modifier = Modifier,
     state: HabitsUiState,
-    onBack: () -> Unit,
     onHabitClick: (String) -> Unit,
     onToggleToday: (String) -> Unit,
     onCreate: () -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize().background(PageBg)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // ── Top bar ─────────────────────────────────────────────────────
+            // ── Top bar (tab root — no back affordance) ─────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -62,9 +59,7 @@ fun HabitListScreen(
                     .padding(horizontal = 4.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                }
+                Spacer(modifier = Modifier.size(48.dp))
                 Text(
                     text = "My Habits",
                     fontSize = 17.sp,

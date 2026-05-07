@@ -3,19 +3,18 @@ package com.example.healthapp.habits.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.healthapp.habits.domain.util.todayDateString
 import com.example.healthapp.habits.presentation.CreateEditHabitScreen
@@ -26,7 +25,6 @@ import com.example.healthapp.habits.presentation.HabitListViewModel
 import com.example.healthapp.ui.theme.AppGreen
 
 object HabitsRoutes {
-    const val GRAPH       = "habits_graph"
     const val LIST        = "habits_list"
     const val DETAIL      = "habits_detail/{habitId}"
     const val CREATE_EDIT = "habits_create_edit?habitId={habitId}"
@@ -36,25 +34,29 @@ object HabitsRoutes {
     val create: String             = "habits_create_edit"
 }
 
-fun NavGraphBuilder.habitsGraph(
-    navController: NavController,
-    onExit: () -> Unit,
+/**
+ * Self-contained navigation tree for the Habits bottom-nav tab. Mirrors
+ * [com.example.healthapp.plans.navigation.PlansNavGraph]: owns its own
+ * [rememberNavController], hoists a single [HabitListViewModel] scoped to the
+ * nearest [androidx.lifecycle.ViewModelStoreOwner] (the MAIN backstack entry),
+ * so toggles, list, detail, and stats all share state.
+ */
+@Composable
+fun HabitsNavGraph(
     modifier: Modifier = Modifier
 ) {
-    navigation(
+    val navController = rememberNavController()
+    val vm: HabitListViewModel = hiltViewModel()
+    val state by vm.state.collectAsState()
+
+    NavHost(
+        navController = navController,
         startDestination = HabitsRoutes.LIST,
-        route = HabitsRoutes.GRAPH
+        modifier = modifier
     ) {
-        composable(HabitsRoutes.LIST) { entry ->
-            val graphEntry = remember(entry) {
-                navController.getBackStackEntry(HabitsRoutes.GRAPH)
-            }
-            val vm: HabitListViewModel = hiltViewModel(graphEntry)
-            val state by vm.state.collectAsState()
+        composable(HabitsRoutes.LIST) {
             HabitListScreen(
-                modifier = modifier,
                 state = state,
-                onBack = onExit,
                 onHabitClick = { id -> navController.navigate(HabitsRoutes.detail(id)) },
                 onToggleToday = vm::toggleToday,
                 onCreate = { navController.navigate(HabitsRoutes.create) }
@@ -66,11 +68,6 @@ fun NavGraphBuilder.habitsGraph(
             arguments = listOf(navArgument("habitId") { type = NavType.StringType })
         ) { entry: NavBackStackEntry ->
             val habitId = entry.arguments?.getString("habitId") ?: return@composable
-            val graphEntry = remember(entry) {
-                navController.getBackStackEntry(HabitsRoutes.GRAPH)
-            }
-            val vm: HabitListViewModel = hiltViewModel(graphEntry)
-            val state by vm.state.collectAsState()
 
             LaunchedEffect(habitId) { vm.loadDetail(habitId) }
 
@@ -83,7 +80,6 @@ fun NavGraphBuilder.habitsGraph(
                 val checkins = state.checkinsByHabit[habitId].orEmpty()
                 val checkedDates = checkins.map { it.date }.toSet()
                 HabitDetailScreen(
-                    modifier = modifier,
                     habit = habit,
                     stats = state.statsByHabit[habitId],
                     checkedDates = checkedDates,
@@ -107,31 +103,24 @@ fun NavGraphBuilder.habitsGraph(
             })
         ) { entry: NavBackStackEntry ->
             val habitId = entry.arguments?.getString("habitId")
-            val graphEntry = remember(entry) {
-                navController.getBackStackEntry(HabitsRoutes.GRAPH)
-            }
-            val listVm: HabitListViewModel = hiltViewModel(graphEntry)
-            val listState by listVm.state.collectAsState()
-
             val createVm: CreateEditHabitViewModel = hiltViewModel()
             val createState by createVm.state.collectAsState()
 
             LaunchedEffect(habitId) {
                 if (habitId != null && createState.editingHabitId != habitId) {
-                    listState.habits.find { it.id == habitId }?.let { createVm.loadForEdit(it) }
+                    state.habits.find { it.id == habitId }?.let { createVm.loadForEdit(it) }
                 }
             }
 
             LaunchedEffect(createState.isSaved) {
                 if (createState.isSaved) {
-                    listVm.reloadAfterSave()
+                    vm.reloadAfterSave()
                     createVm.reset()
                     navController.popBackStack()
                 }
             }
 
             CreateEditHabitScreen(
-                modifier = modifier,
                 state = createState,
                 onNameChange = createVm::setName,
                 onIconChange = createVm::setIcon,

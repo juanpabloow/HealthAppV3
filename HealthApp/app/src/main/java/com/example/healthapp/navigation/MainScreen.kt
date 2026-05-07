@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShowChart
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.healthapp.auth.presentation.AuthUiState
 import com.example.healthapp.dashboard.presentation.DashboardViewModel
 import com.example.healthapp.dashboard.presentation.ScreenTimeScreen
+import com.example.healthapp.habits.navigation.HabitsNavGraph
 import com.example.healthapp.plans.navigation.PlansNavGraph
 import com.example.healthapp.profile.navigation.ProfileNavGraph
 import com.example.healthapp.ui.theme.AppGreen
@@ -33,6 +35,7 @@ import com.example.healthapp.ui.theme.Poppins
 
 private enum class MainTab(val label: String, val icon: ImageVector) {
     STATS("Stats", Icons.Default.ShowChart),
+    HABITS("Habits", Icons.Default.CheckCircle),
     HOME("", Icons.Default.Favorite),
     PROFILE("Profile", Icons.Default.Person)
 }
@@ -47,8 +50,7 @@ fun MainScreen(
     onResetProfileUpdated: () -> Unit,
     onLogout: () -> Unit,
     onMoodClick: () -> Unit = {},
-    onFocusClick: () -> Unit = {},
-    onHabitsClick: () -> Unit = {}
+    onFocusClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(MainTab.STATS) }
 
@@ -73,10 +75,12 @@ fun MainScreen(
                         onRefreshPermission = dashboardViewModel::refreshPermission,
                         onProfileClick = { selectedTab = MainTab.PROFILE },
                         onMoodClick = onMoodClick,
-                        onFocusClick = onFocusClick,
-                        onHabitsClick = onHabitsClick
+                        onFocusClick = onFocusClick
                     )
                 }
+                MainTab.HABITS -> HabitsNavGraph(
+                    modifier = Modifier.fillMaxSize()
+                )
                 MainTab.HOME -> PlansNavGraph(
                     modifier = Modifier.fillMaxSize(),
                     user = authState.user,
@@ -89,8 +93,7 @@ fun MainScreen(
                     onUploadPhoto = onUploadPhoto,
                     onClearError = onClearError,
                     onResetProfileUpdated = onResetProfileUpdated,
-                    onLogout = onLogout,
-                    onHabitsClick = onHabitsClick
+                    onLogout = onLogout
                 )
             }
         }
@@ -110,6 +113,11 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
         contentAlignment = Alignment.BottomCenter
     ) {
         // ── Pill bar ─────────────────────────────────────────────────────
+        // Weighted-halves layout so the 70dp gap (and the floating circle on
+        // top of it) is anchored to the bar's geometric center, even with
+        // different item counts on each side. Two items on the left
+        // (Stats, Habits) hugged to the outer edges via SpaceBetween; one
+        // item on the right (Profile) flush to the right.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,24 +125,39 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
                 .clip(RoundedCornerShape(100.dp))
                 .background(BarColor)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            BottomNavItem(
-                icon = MainTab.STATS.icon,
-                label = MainTab.STATS.label,
-                selected = selectedTab == MainTab.STATS,
-                onClick = { onTabSelected(MainTab.STATS) }
-            )
-            // Gap where the circle sits
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BottomNavItem(
+                    icon = MainTab.STATS.icon,
+                    label = MainTab.STATS.label,
+                    selected = selectedTab == MainTab.STATS,
+                    onClick = { onTabSelected(MainTab.STATS) }
+                )
+                BottomNavItem(
+                    icon = MainTab.HABITS.icon,
+                    label = MainTab.HABITS.label,
+                    selected = selectedTab == MainTab.HABITS,
+                    onClick = { onTabSelected(MainTab.HABITS) }
+                )
+            }
+            // Gap where the floating circle sits
             Spacer(modifier = Modifier.size(70.dp))
-
-            BottomNavItem(
-                icon = MainTab.PROFILE.icon,
-                label = MainTab.PROFILE.label,
-                selected = selectedTab == MainTab.PROFILE,
-                onClick = { onTabSelected(MainTab.PROFILE) }
-            )
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                BottomNavItem(
+                    icon = MainTab.PROFILE.icon,
+                    label = MainTab.PROFILE.label,
+                    selected = selectedTab == MainTab.PROFILE,
+                    onClick = { onTabSelected(MainTab.PROFILE) }
+                )
+            }
         }
 
         // ── Center circle ─────────────────────────────────────────────
