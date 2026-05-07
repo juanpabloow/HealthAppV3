@@ -6,6 +6,6 @@ import javax.inject.Inject
 class DeleteHabitUseCase @Inject constructor(
     private val repository: HabitRepository
 ) {
-    suspend operator fun invoke(habitId: String): Result<Unit> =
-        repository.deleteHabit(habitId)
+    suspend operator fun invoke(habitId: String, userId: String): Result<Unit> =
+        repository.deleteHabit(habitId, userId)
 }

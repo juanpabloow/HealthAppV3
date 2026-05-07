@@ -8,7 +8,9 @@ import com.example.healthapp.habits.domain.usecase.DeleteHabitUseCase
 import com.example.healthapp.habits.domain.usecase.GetCheckinsForDateUseCase
 import com.example.healthapp.habits.domain.usecase.GetHabitCheckinsUseCase
 import com.example.healthapp.habits.domain.usecase.GetHabitsUseCase
+import com.example.healthapp.habits.domain.usecase.GetMonthCheckinsUseCase
 import com.example.healthapp.habits.domain.usecase.ToggleHabitCheckinUseCase
+import java.util.Calendar
 import com.example.healthapp.habits.domain.util.computeHabitStats
 import com.example.healthapp.habits.domain.util.startOfDayMs
 import com.example.healthapp.habits.domain.util.todayDateString
@@ -27,7 +29,8 @@ class HabitListViewModel @Inject constructor(
     private val deleteHabit: DeleteHabitUseCase,
     private val toggleCheckin: ToggleHabitCheckinUseCase,
     private val getCheckins: GetHabitCheckinsUseCase,
-    private val getCheckinsForDate: GetCheckinsForDateUseCase
+    private val getCheckinsForDate: GetCheckinsForDateUseCase,
+    private val getMonthCheckins: GetMonthCheckinsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HabitsUiState())
@@ -124,8 +127,9 @@ class HabitListViewModel @Inject constructor(
     }
 
     fun delete(habitId: String) {
+        val uid = getCurrentUser() ?: return
         viewModelScope.launch {
-            deleteHabit(habitId).onSuccess {
+            deleteHabit(habitId, uid).onSuccess {
                 _state.update {
                     it.copy(
                         habits = it.habits.filter { h -> h.id != habitId },
@@ -141,6 +145,25 @@ class HabitListViewModel @Inject constructor(
     }
 
     fun clearError() = _state.update { it.copy(error = null) }
+
+    /** Loads all check-ins for the current calendar month across all habits. */
+    fun loadMonthProgress() {
+        val uid = getCurrentUser() ?: return
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val fromMs = cal.timeInMillis
+        val toMs   = System.currentTimeMillis()
+        viewModelScope.launch {
+            getMonthCheckins(uid, fromMs, toMs).onSuccess { list ->
+                _state.update { it.copy(monthCheckins = list) }
+            }
+        }
+    }
 
     private fun refreshTodayCheckins() {
         val uid = getCurrentUser() ?: return

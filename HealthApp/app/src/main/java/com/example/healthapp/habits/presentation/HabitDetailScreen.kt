@@ -195,32 +195,17 @@ fun HabitDetailScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Heatmap ─────────────────────────────────────────────────
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Last 5 weeks",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = Poppins,
-                        color = Color(0xFF1A1A1A)
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    HabitHeatmap(
-                        checkedDates = checkedDates,
-                        habitColor = tint
-                    )
-                }
-            }
+            // ── Progress section ─────────────────────────────────────────
+            Text(
+                text = "Your progress",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Poppins,
+                color = Color(0xFF1A1A1A)
+            )
+            Spacer(Modifier.height(10.dp))
 
-            Spacer(Modifier.height(16.dp))
-
-            // ── Stats row ──────────────────────────────────────────────
+            // Stats row — shown BEFORE heatmap so they're seen first
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -237,6 +222,44 @@ fun HabitDetailScreen(
                     value = "${((stats?.completionRate30d ?: 0f) * 100).toInt()}%",
                     accent = AppGreen
                 )
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            // Heatmap card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Last 5 weeks",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = Poppins,
+                            color = Color(0xFF1A1A1A)
+                        )
+                        Text(
+                            text = "${checkedDates.size} check-ins",
+                            fontSize = 11.sp,
+                            fontFamily = Poppins,
+                            color = tint,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    HabitHeatmap(
+                        checkedDates = checkedDates,
+                        habitColor = tint
+                    )
+                }
             }
 
             Spacer(Modifier.height(40.dp))

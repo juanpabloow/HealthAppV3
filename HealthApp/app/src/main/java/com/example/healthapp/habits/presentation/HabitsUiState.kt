@@ -9,6 +9,7 @@ data class HabitsUiState(
     val todayCheckedHabitIds: Set<String> = emptySet(),
     val checkinsByHabit: Map<String, List<HabitCheckin>> = emptyMap(),
     val statsByHabit: Map<String, HabitStats> = emptyMap(),
+    val monthCheckins: List<HabitCheckin> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )

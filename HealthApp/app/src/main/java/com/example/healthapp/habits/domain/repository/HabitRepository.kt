@@ -6,7 +6,7 @@ import com.example.healthapp.habits.domain.model.HabitCheckin
 interface HabitRepository {
     suspend fun getHabits(userId: String): Result<List<Habit>>
     suspend fun saveHabit(habit: Habit): Result<String>
-    suspend fun deleteHabit(habitId: String): Result<Unit>
+    suspend fun deleteHabit(habitId: String, userId: String): Result<Unit>
     suspend fun toggleCheckin(checkin: HabitCheckin, checked: Boolean): Result<Unit>
     suspend fun getCheckins(
         userId: String,

@@ -3,20 +3,23 @@ package com.example.healthapp.dashboard.presentation
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.border
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.healthapp.ai.presentation.insight.DailyInsightViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +39,7 @@ import java.util.*
 fun ScreenTimeScreen(
     modifier: Modifier = Modifier,
     state: DashboardUiState,
+    userName: String? = null,
     onTabSelected: (ScreenTimeTab) -> Unit,
     onDateSelected: (Long) -> Unit,
     onRefreshPermission: () -> Unit,
@@ -55,121 +59,61 @@ fun ScreenTimeScreen(
         return
     }
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 24.dp)
-    ) {
-        // First thing the user sees — AI-generated daily insight.
-        item {
-            DailyInsightCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 16.dp, bottom = 4.dp)
-            )
-        }
+    // Insight ViewModel — same instance reused by DailyInsightCard inside the list
+    val insightVm: DailyInsightViewModel = hiltViewModel()
+    val insightState by insightVm.state.collectAsState()
+    var insightVisible by remember { mutableStateOf(true) }
 
-        item {
-            // Header con mes/semana
-            ScreenTimeHeader(state = state, onTabSelected = onTabSelected, onProfileClick = onProfileClick)
-        }
+    Box(modifier = modifier.fillMaxSize()) {
 
-        item {
-            MoodTodayCard(onClick = onMoodClick)
-        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 24.dp)
+        ) {
+            // Show full insight card in the list only when there is a real insight or loading
+            if (insightVisible && insightState.error == null) {
+                item {
+                    DailyInsightCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                            .padding(top = 16.dp, bottom = 4.dp),
+                        viewModel = insightVm
+                    )
+                }
+            }
 
-        item {
-            FocusTodayCard(onClick = onFocusClick)
-        }
+            item {
+                ScreenTimeHeader(state = state, userName = userName, onTabSelected = onTabSelected, onProfileClick = onProfileClick)
+            }
 
-        item {
-            when (state.selectedTab) {
-                ScreenTimeTab.DAY -> DayView(
-                    state = state,
-                    onDateSelected = onDateSelected
-                )
-                ScreenTimeTab.WEEK -> WeekView(state = state)
-                ScreenTimeTab.MONTH -> MonthPlaceholder()
+            item {
+                when (state.selectedTab) {
+                    ScreenTimeTab.DAY -> DayView(state = state, onDateSelected = onDateSelected)
+                    ScreenTimeTab.WEEK -> WeekView(state = state)
+                    ScreenTimeTab.MONTH -> MonthPlaceholder()
+                }
             }
         }
+
+        // Fixed floating bubble — only when there is an error and not dismissed
+        if (insightVisible && insightState.error != null) {
+            DailyInsightCard(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 14.dp, end = 18.dp),
+                viewModel = insightVm,
+                onDismissed = { insightVisible = false }
+            )
+        }
     }
 }
 
-@Composable
-private fun MoodTodayCard(onClick: () -> Unit) {
-    DashboardCtaCard(
-        emoji = "🙂",
-        title = "How are you feeling today?",
-        subtitle = "Tap to log your mood",
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun FocusTodayCard(onClick: () -> Unit) {
-    DashboardCtaCard(
-        emoji = "⏱️",
-        title = "Start a focus session",
-        subtitle = "Pomodoro timer · history · stats",
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun DashboardCtaCard(
-    emoji: String,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .clickable { onClick() }
-            .padding(horizontal = 14.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(46.dp)
-                .clip(CircleShape)
-                .background(AppGreen.copy(alpha = 0.12f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(emoji, fontSize = 24.sp)
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = Poppins,
-                color = Color(0xFF1A1A1A)
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = subtitle,
-                fontSize = 12.sp,
-                color = Color.Gray,
-                fontFamily = Poppins
-            )
-        }
-        Text(
-            text = "›",
-            fontSize = 22.sp,
-            color = AppGreen,
-            modifier = Modifier.padding(end = 6.dp)
-        )
-    }
-}
 
 @Composable
 private fun ScreenTimeHeader(
     state: DashboardUiState,
+    userName: String? = null,
     onTabSelected: (ScreenTimeTab) -> Unit,
     onProfileClick: () -> Unit
 ) {
@@ -208,37 +152,39 @@ private fun ScreenTimeHeader(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 // Bell icon
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(40.dp)
+                        .shadow(2.dp, CircleShape, clip = false)
                         .clip(CircleShape)
-                        .background(Color(0xFFF5F5F5)),
+                        .background(Color.White),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "Notifications",
                         tint = Color.DarkGray,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
-                // Avatar — tap to go to Profile tab
+                // Avatar
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
-                        .background(AppGreen.copy(alpha = 0.2f))
-                        .border(2.dp, AppGreen, CircleShape)
+                        .background(AppGreen.copy(alpha = 0.15f))
+                        .border(1.5.dp, AppGreen, CircleShape)
                         .clickable { onProfileClick() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "U",
-                        fontSize = 16.sp,
+                        text = userName?.firstOrNull()?.uppercaseChar()?.toString() ?: "U",
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
+                        fontFamily = Poppins,
                         color = AppGreen
                     )
                 }

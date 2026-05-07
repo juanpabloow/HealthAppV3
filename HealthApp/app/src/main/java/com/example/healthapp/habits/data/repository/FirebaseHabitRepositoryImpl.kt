@@ -36,10 +36,14 @@ class FirebaseHabitRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun deleteHabit(habitId: String): Result<Unit> = try {
+    override suspend fun deleteHabit(habitId: String, userId: String): Result<Unit> = try {
         habitsCol.document(habitId).delete().await()
-        // Best-effort: also delete this habit's checkins so stats don't include orphans
-        val checkins = checkinsCol.whereEqualTo("habitId", habitId).get().await()
+        // Delete this habit's checkins — filter by both userId AND habitId so the
+        // query satisfies Firestore security rules that require userId == auth.uid
+        val checkins = checkinsCol
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("habitId", habitId)
+            .get().await()
         checkins.documents.forEach { it.reference.delete().await() }
         Result.success(Unit)
     } catch (e: Exception) {

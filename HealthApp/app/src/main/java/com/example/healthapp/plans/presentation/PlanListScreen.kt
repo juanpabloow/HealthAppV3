@@ -18,12 +18,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -142,23 +140,32 @@ private fun PlanListHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(Color(0xFFF5F7FA))
             .padding(horizontal = 20.dp)
-            .padding(top = 16.dp, bottom = 20.dp)
+            .padding(top = 20.dp, bottom = 16.dp)
     ) {
-        // Top row: app name + icons
+        // Top row: label + title + icons  (matches HomeScreen / Calendar style)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Heal",
-                fontFamily = Poppins,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color(0xFF1A1A1A)
-            )
+            Column {
+                Text(
+                    text = "My Goals",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = Poppins,
+                    color = Color.Gray
+                )
+                Text(
+                    text = "Plans",
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Poppins,
+                    color = Color(0xFF1A1A1A)
+                )
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -166,25 +173,26 @@ private fun PlanListHeader(
                 // Bell
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(40.dp)
+                        .shadow(2.dp, CircleShape, clip = false)
                         .clip(CircleShape)
-                        .background(Color(0xFFF5F5F5)),
+                        .background(Color.White),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "Notifications",
                         tint = Color.DarkGray,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
                 // Avatar
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
                         .background(AppGreen.copy(alpha = 0.15f))
-                        .border(2.dp, AppGreen, CircleShape)
+                        .border(1.5.dp, AppGreen, CircleShape)
                         .clickable { onProfileClick() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -198,7 +206,7 @@ private fun PlanListHeader(
                     } else {
                         Text(
                             text = initials,
-                            fontSize = 14.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = AppGreen,
                             fontFamily = Poppins
@@ -209,30 +217,6 @@ private fun PlanListHeader(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Hero title
-        Text(
-            text = buildAnnotatedString {
-                append("It's time to ")
-                withStyle(SpanStyle(color = AppGreen, fontWeight = FontWeight.Bold)) {
-                    append("heal")
-                }
-                append(" 🍃")
-            },
-            fontFamily = Poppins,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = Color(0xFF1A1A1A)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Based on the survey we suggest some plans",
-            fontFamily = Poppins,
-            fontSize = 13.sp,
-            color = Color.Gray
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
 
         // Stats row
         Row(

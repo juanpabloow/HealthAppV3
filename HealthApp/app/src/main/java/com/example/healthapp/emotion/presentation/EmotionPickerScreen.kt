@@ -21,6 +21,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -88,12 +91,8 @@ fun EmotionPickerScreen(
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
-            IconButton(onClick = onOpenCalendar) {
-                Icon(Icons.Default.CalendarMonth, contentDescription = "History", tint = AppGreen)
-            }
-            IconButton(onClick = onOpenStats) {
-                Icon(Icons.Default.BarChart, contentDescription = "Stats", tint = AppGreen)
-            }
+            // Keep as lightweight secondary access
+            Spacer(modifier = Modifier.size(48.dp))
         }
 
         Column(
@@ -204,6 +203,43 @@ fun EmotionPickerScreen(
                 }
             }
 
+            Spacer(Modifier.height(24.dp))
+
+            // ── Explore your mood journey ────────────────────────────────
+            Text(
+                text = "Explore your mood",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = Poppins,
+                color = Color(0xFF1A1A1A)
+            )
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // History card
+                MoodShortcutCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.CalendarMonth,
+                    iconBg = Color(0xFFE8F5E9),
+                    iconTint = AppGreen,
+                    title = "History",
+                    subtitle = "Day by day",
+                    onClick = onOpenCalendar
+                )
+                // Stats card
+                MoodShortcutCard(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.BarChart,
+                    iconBg = Color(0xFFE3F2FD),
+                    iconTint = Color(0xFF1565C0),
+                    title = "Stats",
+                    subtitle = "Trends & patterns",
+                    onClick = onOpenStats
+                )
+            }
+
             Spacer(Modifier.height(40.dp))
         }
     }
@@ -272,6 +308,68 @@ private fun EmotionCell(
                 color = if (selected) tint else Color(0xFF555555)
             )
         }
+    }
+}
+
+@Composable
+private fun MoodShortcutCard(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    iconBg: Color,
+    iconTint: Color,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .shadow(2.dp, RoundedCornerShape(18.dp), clip = false)
+            .clip(RoundedCornerShape(18.dp))
+            .background(Color.White)
+            .clickable { onClick() }
+            .padding(14.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(iconBg),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = null,
+                tint = Color(0xFFCCCCCC),
+                modifier = Modifier.size(16.dp)
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = Poppins,
+            color = Color(0xFF1A1A1A)
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = subtitle,
+            fontSize = 10.sp,
+            fontFamily = Poppins,
+            color = Color.Gray
+        )
     }
 }
 
