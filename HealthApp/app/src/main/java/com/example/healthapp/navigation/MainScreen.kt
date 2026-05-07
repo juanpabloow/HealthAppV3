@@ -113,11 +113,10 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
         contentAlignment = Alignment.BottomCenter
     ) {
         // ── Pill bar ─────────────────────────────────────────────────────
-        // Weighted-halves layout so the 70dp gap (and the floating circle on
-        // top of it) is anchored to the bar's geometric center, even with
-        // different item counts on each side. Two items on the left
-        // (Stats, Habits) hugged to the outer edges via SpaceBetween; one
-        // item on the right (Profile) flush to the right.
+        // Stats · Habits · Profile evenly spaced on the left; 70dp gap on
+        // the right where the floating leaf button now sits. The 3 left
+        // items use Arrangement.SpaceEvenly inside their weight(1f) Row so
+        // every gap between them is identical regardless of label width.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,7 +128,7 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
         ) {
             Row(
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BottomNavItem(
@@ -144,13 +143,6 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
                     selected = selectedTab == MainTab.HABITS,
                     onClick = { onTabSelected(MainTab.HABITS) }
                 )
-            }
-            // Gap where the floating circle sits
-            Spacer(modifier = Modifier.size(70.dp))
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterEnd
-            ) {
                 BottomNavItem(
                     icon = MainTab.PROFILE.icon,
                     label = MainTab.PROFILE.label,
@@ -158,11 +150,17 @@ private fun MainBottomBar(selectedTab: MainTab, onTabSelected: (MainTab) -> Unit
                     onClick = { onTabSelected(MainTab.PROFILE) }
                 )
             }
+            // Gap where the floating leaf circle sits (right end)
+            Spacer(modifier = Modifier.size(70.dp))
         }
 
-        // ── Center circle ─────────────────────────────────────────────
+        // ── Floating leaf button (right end) ──────────────────────────
+        // Same visual style as before: 82dp circle, -20dp y-offset so it
+        // pops above the pill, same green and shadow. Only the horizontal
+        // anchor changed — Alignment.BottomEnd instead of BottomCenter.
         Box(
             modifier = Modifier
+                .align(Alignment.BottomEnd)
                 .size(82.dp)
                 .offset(y = (-20).dp)
                 .shadow(8.dp, CircleShape, clip = false)
