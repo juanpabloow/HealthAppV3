@@ -38,7 +38,8 @@ fun ScreenTimeScreen(
     onTabSelected: (ScreenTimeTab) -> Unit,
     onDateSelected: (Long) -> Unit,
     onRefreshPermission: () -> Unit,
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onMoodClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -62,6 +63,10 @@ fun ScreenTimeScreen(
         }
 
         item {
+            MoodTodayCard(onClick = onMoodClick)
+        }
+
+        item {
             when (state.selectedTab) {
                 ScreenTimeTab.DAY -> DayView(
                     state = state,
@@ -71,6 +76,53 @@ fun ScreenTimeScreen(
                 ScreenTimeTab.MONTH -> MonthPlaceholder()
             }
         }
+    }
+}
+
+@Composable
+private fun MoodTodayCard(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .clickable { onClick() }
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(46.dp)
+                .clip(CircleShape)
+                .background(AppGreen.copy(alpha = 0.12f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("🙂", fontSize = 24.sp)
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "How are you feeling today?",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = Poppins,
+                color = Color(0xFF1A1A1A)
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "Tap to log your mood",
+                fontSize = 12.sp,
+                color = Color.Gray,
+                fontFamily = Poppins
+            )
+        }
+        Text(
+            text = "›",
+            fontSize = 22.sp,
+            color = AppGreen,
+            modifier = Modifier.padding(end = 6.dp)
+        )
     }
 }
 

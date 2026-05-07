@@ -4,6 +4,8 @@ import com.example.healthapp.auth.data.repository.FirebaseAuthRepositoryImpl
 import com.example.healthapp.auth.domain.repository.AuthRepository
 import com.example.healthapp.dashboard.data.repository.ScreenTimeRepositoryImpl
 import com.example.healthapp.dashboard.domain.repository.ScreenTimeRepository
+import com.example.healthapp.emotion.data.repository.FirebaseEmotionRepositoryImpl
+import com.example.healthapp.emotion.domain.repository.EmotionRepository
 import com.example.healthapp.plans.data.repository.FirebasePlanRepositoryImpl
 import com.example.healthapp.plans.domain.repository.PlanRepository
 import com.example.healthapp.survey.data.repository.FirebaseSurveyRepositoryImpl
@@ -54,4 +56,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPlanRepository(impl: FirebasePlanRepositoryImpl): PlanRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEmotionRepository(impl: FirebaseEmotionRepositoryImpl): EmotionRepository
 }

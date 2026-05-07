@@ -45,7 +45,8 @@ fun MainScreen(
     onUploadPhoto: (ByteArray) -> Unit,
     onClearError: () -> Unit,
     onResetProfileUpdated: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onMoodClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(MainTab.STATS) }
 
@@ -68,7 +69,8 @@ fun MainScreen(
                         onTabSelected = dashboardViewModel::selectTab,
                         onDateSelected = dashboardViewModel::selectDate,
                         onRefreshPermission = dashboardViewModel::refreshPermission,
-                        onProfileClick = { selectedTab = MainTab.PROFILE }
+                        onProfileClick = { selectedTab = MainTab.PROFILE },
+                        onMoodClick = onMoodClick
                     )
                 }
                 MainTab.HOME -> PlansNavGraph(

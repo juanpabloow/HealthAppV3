@@ -21,6 +21,8 @@ import com.example.healthapp.auth.presentation.SignUpScreen
 import com.example.healthapp.auth.presentation.VerificationCodeScreen
 import com.example.healthapp.auth.presentation.WelcomeScreen
 import com.example.healthapp.dashboard.presentation.PermissionsScreen
+import com.example.healthapp.emotion.navigation.EmotionRoutes
+import com.example.healthapp.emotion.navigation.emotionGraph
 import com.example.healthapp.survey.presentation.SurveyActivitiesScreen
 import com.example.healthapp.survey.presentation.SurveyGoalScreen
 import com.example.healthapp.survey.presentation.SurveyMoodScreen
@@ -45,6 +47,9 @@ private object Routes {
     // Main app (with bottom nav)
     const val PERMISSIONS = "permissions"
     const val MAIN = "main"
+
+    // Emotion tracker (top-level graph, full-screen)
+    const val EMOTION_GRAPH = EmotionRoutes.GRAPH
 }
 
 @Composable
@@ -265,8 +270,15 @@ fun AppNavGraph(modifier: Modifier = Modifier) {
                     navController.navigate(Routes.WELCOME) {
                         popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                onMoodClick = { navController.navigate(Routes.EMOTION_GRAPH) }
             )
         }
+
+        // ── Emotion Tracker (full-screen graph) ──────────────────────────
+        emotionGraph(
+            navController = navController,
+            onExit = { navController.popBackStack(Routes.MAIN, inclusive = false) }
+        )
     }
 }
