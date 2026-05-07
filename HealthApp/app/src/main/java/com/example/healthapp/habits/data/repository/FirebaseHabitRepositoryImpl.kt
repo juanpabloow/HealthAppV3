@@ -99,4 +99,21 @@ class FirebaseHabitRepositoryImpl @Inject constructor(
     } catch (e: Exception) {
         Result.failure(e)
     }
+
+    override suspend fun getRecentCheckinsForUser(
+        userId: String,
+        fromMs: Long,
+        toMs: Long
+    ): Result<List<HabitCheckin>> = try {
+        // Single equality filter + in-memory date range — no composite index
+        // needed; the rule engine sees a userId-scoped query so it passes
+        // even with strict per-doc rules.
+        val snap = checkinsCol.whereEqualTo("userId", userId).get().await()
+        val list = snap.documents
+            .mapNotNull { it.toObject(HabitCheckinDto::class.java)?.toDomain() }
+            .filter { it.dateMs in fromMs..toMs }
+        Result.success(list)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 }

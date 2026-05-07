@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.healthapp.ai.presentation.insight.DailyInsightCard
 import com.example.healthapp.dashboard.domain.model.AppUsageData
 import com.example.healthapp.ui.theme.AppBarColors
 import com.example.healthapp.ui.theme.AppGreen
@@ -58,6 +59,16 @@ fun ScreenTimeScreen(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
+        // First thing the user sees — AI-generated daily insight.
+        item {
+            DailyInsightCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 16.dp, bottom = 4.dp)
+            )
+        }
+
         item {
             // Header con mes/semana
             ScreenTimeHeader(state = state, onTabSelected = onTabSelected, onProfileClick = onProfileClick)

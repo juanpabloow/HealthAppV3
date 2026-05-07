@@ -15,4 +15,16 @@ interface HabitRepository {
         toMs: Long
     ): Result<List<HabitCheckin>>
     suspend fun getCheckinsForDate(userId: String, date: String): Result<List<HabitCheckin>>
+
+    /**
+     * All check-ins for [userId] across all habits whose `dateMs` falls in
+     * the range fromMs..toMs. Used by features that need user-wide history
+     * (e.g. computing the top current streak across habits) in a single
+     * Firestore read instead of one per habit.
+     */
+    suspend fun getRecentCheckinsForUser(
+        userId: String,
+        fromMs: Long,
+        toMs: Long
+    ): Result<List<HabitCheckin>>
 }

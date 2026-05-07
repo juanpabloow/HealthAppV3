@@ -1,5 +1,7 @@
 package com.example.healthapp.di
 
+import com.example.healthapp.ai.data.repository.DailyInsightRepositoryImpl
+import com.example.healthapp.ai.domain.repository.DailyInsightRepository
 import com.example.healthapp.auth.data.repository.FirebaseAuthRepositoryImpl
 import com.example.healthapp.auth.domain.repository.AuthRepository
 import com.example.healthapp.dashboard.data.repository.ScreenTimeRepositoryImpl
@@ -72,4 +74,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindHabitRepository(impl: FirebaseHabitRepositoryImpl): HabitRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDailyInsightRepository(impl: DailyInsightRepositoryImpl): DailyInsightRepository
 }
