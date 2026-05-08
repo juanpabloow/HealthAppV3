@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.healthapp.ai.presentation.insight.DailyInsightViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
@@ -27,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.healthapp.ai.presentation.insight.DailyInsightCard
+import com.example.healthapp.ai.presentation.insight.DailyInsightBubble
 import com.example.healthapp.dashboard.domain.model.AppUsageData
 import com.example.healthapp.ui.theme.AppBarColors
 import com.example.healthapp.ui.theme.AppGreen
@@ -59,32 +57,18 @@ fun ScreenTimeScreen(
         return
     }
 
-    // Insight ViewModel — same instance reused by DailyInsightCard inside the list
-    val insightVm: DailyInsightViewModel = hiltViewModel()
-    val insightState by insightVm.state.collectAsState()
-    var insightVisible by remember { mutableStateOf(true) }
-
     Box(modifier = modifier.fillMaxSize()) {
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            // Show full insight card in the list only when there is a real insight or loading
-            if (insightVisible && insightState.error == null) {
-                item {
-                    DailyInsightCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .padding(top = 16.dp, bottom = 4.dp),
-                        viewModel = insightVm
-                    )
-                }
-            }
-
             item {
-                ScreenTimeHeader(state = state, userName = userName, onTabSelected = onTabSelected, onProfileClick = onProfileClick)
+                ScreenTimeHeader(
+                    state = state,
+                    userName = userName,
+                    onTabSelected = onTabSelected,
+                    onProfileClick = onProfileClick
+                )
             }
 
             item {
@@ -96,16 +80,13 @@ fun ScreenTimeScreen(
             }
         }
 
-        // Fixed floating bubble — only when there is an error and not dismissed
-        if (insightVisible && insightState.error != null) {
-            DailyInsightCard(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 14.dp, end = 18.dp),
-                viewModel = insightVm,
-                onDismissed = { insightVisible = false }
-            )
-        }
+        // Floating AI insight bubble — bottom-left, above the bottom nav.
+        // Self-contained: pulses when fresh, opens a modal bottom sheet on tap.
+        DailyInsightBubble(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 18.dp, bottom = 18.dp)
+        )
     }
 }
 
